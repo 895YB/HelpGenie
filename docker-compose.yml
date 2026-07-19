@@ -1,0 +1,51 @@
+version: '3.9'
+
+services:
+  # ── Backend API ────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ai_widget_backend
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    ports:
+      - '5000:5000'
+    volumes:
+      - uploads_data:/app/uploads
+    networks:
+      - ai_widget_net
+    healthcheck:
+      test: ['CMD', 'wget', '-qO-', 'http://localhost:5000/api/health']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    depends_on: []      # MongoDB Atlas is external — no local mongo service needed
+
+  # ── Frontend Dashboard ─────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: http://localhost:5000/api
+        VITE_SOCKET_URL: http://localhost:5000
+        VITE_APP_NAME: AI Widget
+    container_name: ai_widget_frontend
+    restart: unless-stopped
+    ports:
+      - '3000:80'
+    networks:
+      - ai_widget_net
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  uploads_data:
+
+networks:
+  ai_widget_net:
+    driver: bridge

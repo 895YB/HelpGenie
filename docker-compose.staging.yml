@@ -1,0 +1,18 @@
+version: '3.9'
+
+# Overrides for staging environment — used with:
+#   docker compose -f docker-compose.yml -f docker-compose.staging.yml up
+
+services:
+  backend:
+    environment:
+      NODE_ENV: staging
+    env_file:
+      - ./backend/.env.staging
+
+  frontend:
+    build:
+      args:
+        VITE_API_URL: ${STAGING_API_URL}
+        VITE_SOCKET_URL: ${STAGING_SOCKET_URL}
+        VITE_APP_NAME: "AI Widget (Staging)"

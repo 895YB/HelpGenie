@@ -1,0 +1,108 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop, staging]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  # ── Backend ─────────────────────────────────────────────────
+  backend-ci:
+    name: Backend — Lint + Test
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm ci
+
+      - name: Lint backend
+        working-directory: backend
+        run: npm run lint
+
+      - name: Run backend tests
+        working-directory: backend
+        run: npm run test:coverage
+        env:
+          NODE_ENV: test
+          JWT_SECRET: ci_test_jwt_secret_32chars_minimum
+          JWT_REFRESH_SECRET: ci_test_refresh_secret_32chars_min
+          MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+      - name: Upload coverage report
+        uses: codecov/codecov-action@v4
+        with:
+          directory: backend/coverage
+          flags: backend
+
+  # ── Frontend ────────────────────────────────────────────────
+  frontend-ci:
+    name: Frontend — Lint + Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Lint frontend
+        working-directory: frontend
+        run: npm run lint
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+        env:
+          VITE_API_URL: https://api.yourapp.com/api
+          VITE_SOCKET_URL: https://api.yourapp.com
+          VITE_APP_NAME: AI Widget
+
+  # ── Widget ──────────────────────────────────────────────────
+  widget-ci:
+    name: Widget — Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+          cache-dependency-path: widget/package-lock.json
+
+      - name: Install widget dependencies
+        working-directory: widget
+        run: npm ci
+
+      - name: Build widget bundle
+        working-directory: widget
+        run: npm run build
+        env:
+          VITE_API_URL: https://api.yourapp.com/api
+          VITE_SOCKET_URL: https://api.yourapp.com
