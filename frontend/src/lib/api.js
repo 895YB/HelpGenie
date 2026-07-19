@@ -1,5 +1,11 @@
 import axios from 'axios';
 
+// Falls back to a relative '/api' for local dev, where vite.config.js's
+// dev-server proxy forwards it to the backend. In production (e.g. Vercel),
+// the frontend and backend are on different origins, so VITE_API_URL must
+// be set to the deployed backend's URL.
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+
 // ── Module-level token store ──────────────────────────────────
 let _accessToken = null;
 
@@ -20,7 +26,7 @@ export function onSessionExpired(cb) { _onSessionExpired = cb; }
 
 // ── Axios instance ────────────────────────────────────────────
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: API_BASE_URL,
   timeout: 30_000,
   withCredentials: true, // include httpOnly refresh-token cookie
   headers: { 'Content-Type': 'application/json' },
@@ -72,7 +78,7 @@ api.interceptors.response.use(
 
     try {
       const { data } = await axios.post(
-        '/api/auth/refresh',
+        `${API_BASE_URL}/auth/refresh`,
         {},
         { withCredentials: true }
       );

@@ -65,9 +65,9 @@ docker compose up --build
 
 | Variable | Purpose |
 |---|---|
-| `VITE_API_URL` | Backend API base URL |
-| `VITE_SOCKET_URL` | Backend Socket.io origin |
-| `VITE_APP_NAME`, `VITE_APP_VERSION` | Branding shown in the dashboard UI |
+| `VITE_API_URL` | Backend API base URL, read by `src/lib/api.js`. **Required in production** — falls back to a relative `/api` otherwise, which only resolves correctly in local dev via `vite.config.js`'s dev-server proxy. On Vercel (or any host where frontend and backend are different origins), an unset `VITE_API_URL` means every dashboard API call 404s. |
+| `VITE_SOCKET_URL` | Not currently read anywhere in `frontend/` — the admin dashboard has no live Socket.io connection (only the embeddable widget does; see `widget/.env` below). Kept in `.env.example` for parity/future use. |
+| `VITE_APP_NAME`, `VITE_APP_VERSION` | Not currently read anywhere in `frontend/` — reserved for future branding use. |
 
 ### `widget/.env`
 
