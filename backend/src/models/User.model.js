@@ -107,7 +107,7 @@ userSchema.virtual('initials').get(function () {
 
 // ── Hooks ───────────────────────────────────────────────────
 userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
+  if (!this.isModified('password')) {return next();}
   this.password = await bcrypt.hash(this.password, SALT_ROUNDS);
   next();
 });

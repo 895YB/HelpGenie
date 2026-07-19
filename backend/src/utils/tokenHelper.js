@@ -45,7 +45,7 @@ export function hashToken(token) {
 
 /** Parse "Bearer <token>" header value. Returns null when malformed. */
 export function extractBearerToken(authHeader) {
-  if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {return null;}
   const token = authHeader.slice(7).trim();
   return token || null;
 }

@@ -15,8 +15,8 @@ export const documentRepository = {
 
   async findByCompany(companyId, { status, fileType, page = 1, limit = 20 } = {}) {
     const filter = { companyId, isDeleted: false };
-    if (status) filter.status = status;
-    if (fileType) filter.fileType = fileType;
+    if (status) {filter.status = status;}
+    if (fileType) {filter.fileType = fileType;}
 
     const skip = (page - 1) * limit;
     const [documents, total] = await Promise.all([

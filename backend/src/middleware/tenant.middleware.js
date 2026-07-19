@@ -61,6 +61,6 @@ export async function resolveWidgetTenant(req, _res, next) {
  * Admin role bypasses this check.
  */
 export function assertSameTenant(resourceCompanyId, req) {
-  if (req.userRole === 'admin') return true;
+  if (req.userRole === 'admin') {return true;}
   return resourceCompanyId?.toString() === req.companyId;
 }

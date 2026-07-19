@@ -16,13 +16,6 @@ import SettingsPage       from '@/pages/dashboard/SettingsPage';
 import TeamPage           from '@/pages/dashboard/TeamPage';
 import SubscriptionPage   from '@/pages/dashboard/SubscriptionPage';
 
-// Placeholder for pages added in upcoming modules
-const ComingSoon = ({ name }) => (
-  <div className="flex h-64 items-center justify-center rounded-xl border-2 border-dashed border-gray-200">
-    <p className="text-sm text-gray-400">{name} — coming soon</p>
-  </div>
-);
-
 export default function App() {
   return (
     <BrowserRouter>

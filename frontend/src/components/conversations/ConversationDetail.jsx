@@ -32,7 +32,7 @@ export default function ConversationDetail({ conversationId, onBack }) {
   if (isLoading) {
     return (
       <div className="flex flex-1 flex-col">
-        <DetailHeader skeleton onBack={onBack} />
+        <DetailHeader onBack={onBack} />
         <div className="flex-1 space-y-4 overflow-y-auto p-5">
           {[...Array(4)].map((_, i) => (
             <div
@@ -177,7 +177,7 @@ export default function ConversationDetail({ conversationId, onBack }) {
   );
 }
 
-function DetailHeader({ skeleton, onBack }) {
+function DetailHeader({ onBack }) {
   return (
     <div className="flex shrink-0 items-center gap-3 border-b border-gray-100 px-5 py-3.5">
       {onBack && (

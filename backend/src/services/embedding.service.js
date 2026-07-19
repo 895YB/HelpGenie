@@ -79,7 +79,7 @@ export const embeddingService = {
    * @returns {Promise<number[][]>} Array of 1536-dim embeddings in input order
    */
   async embedBatch(texts) {
-    if (!texts.length) return [];
+    if (!texts.length) {return [];}
 
     const allEmbeddings = [];
 

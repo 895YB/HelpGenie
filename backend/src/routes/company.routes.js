@@ -7,17 +7,21 @@ import {
   regenerateApiKey,
   getEmbedCode,
   getSubscription,
+  getWidgetConfig,
 } from '../controllers/company.controller.js';
 import { authenticate } from '../middleware/auth.middleware.js';
-import { requireTenant } from '../middleware/tenant.middleware.js';
+import { requireTenant, resolveWidgetTenant } from '../middleware/tenant.middleware.js';
 import { requireAdmin, requireAdminOrEmployee } from '../middleware/role.middleware.js';
 import { uploadImage } from '../middleware/upload.middleware.js';
-import { uploadLimiter } from '../middleware/rateLimit.middleware.js';
+import { uploadLimiter, chatLimiter } from '../middleware/rateLimit.middleware.js';
 import { validateUpdateCompany } from '../validators/company.validator.js';
 
 const router = Router();
 
-// All company routes require authentication + tenant context
+// ── Public widget route (no JWT) — must precede the auth block below ──
+router.get('/widget-config', chatLimiter, resolveWidgetTenant, getWidgetConfig);
+
+// All remaining company routes require authentication + tenant context
 router.use(authenticate, requireTenant);
 
 router.get('/', requireAdminOrEmployee, getCompany);

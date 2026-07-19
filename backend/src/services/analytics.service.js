@@ -109,9 +109,9 @@ export const analyticsService = {
     const byDate = {};
     for (const row of daily) {
       const { date, rating } = row._id;
-      if (!byDate[date]) byDate[date] = { thumbsUp: 0, thumbsDown: 0 };
-      if (rating === 'thumbs_up')   byDate[date].thumbsUp   = row.count;
-      if (rating === 'thumbs_down') byDate[date].thumbsDown = row.count;
+      if (!byDate[date]) {byDate[date] = { thumbsUp: 0, thumbsDown: 0 };}
+      if (rating === 'thumbs_up')   {byDate[date].thumbsUp   = row.count;}
+      if (rating === 'thumbs_down') {byDate[date].thumbsDown = row.count;}
     }
 
     const dailyArray = Object.entries(byDate)
@@ -222,7 +222,7 @@ function _previousPeriod(start, end) {
 }
 
 function _trend(current, previous) {
-  if (previous == null || previous === 0) return null;
+  if (previous === null || previous === undefined || previous === 0) {return null;}
   return Math.round(((current - previous) / previous) * 1000) / 10; // 1 decimal %
 }
 

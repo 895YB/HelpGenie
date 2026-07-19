@@ -50,8 +50,8 @@ app.use(
   cors({
     origin(origin, cb) {
       // Allow requests with no origin (curl, mobile apps, Postman)
-      if (!origin) return cb(null, true);
-      if (allowedOrigins.includes(origin)) return cb(null, true);
+      if (!origin) {return cb(null, true);}
+      if (allowedOrigins.includes(origin)) {return cb(null, true);}
       cb(new Error(`CORS policy does not allow origin: ${origin}`));
     },
     credentials: true,

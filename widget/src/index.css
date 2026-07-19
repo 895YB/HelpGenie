@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.aiw-root {
+  --aiw-primary: #0ea5e9;
+  --aiw-secondary: #0284c7;
+  --aiw-accent: #38bdf8;
+}
+
+.aiw-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background-color: #9ca3af;
+  animation: aiw-bounce 1.2s infinite ease-in-out both;
+}
+
+@keyframes aiw-bounce {
+  0%,
+  80%,
+  100% {
+    transform: scale(0.6);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.aiw-markdown p {
+  margin: 0 0 0.5em;
+}
+.aiw-markdown p:last-child {
+  margin-bottom: 0;
+}
+.aiw-markdown ul,
+.aiw-markdown ol {
+  margin: 0.25em 0 0.5em 1.1em;
+}
+.aiw-markdown a {
+  color: var(--aiw-primary);
+  text-decoration: underline;
+}
+.aiw-markdown code {
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+  font-size: 0.85em;
+}

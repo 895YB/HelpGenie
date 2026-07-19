@@ -187,15 +187,69 @@ describe('companyService', () => {
   describe('getEmbedCode', () => {
     it('includes the widgetId in the embed script tag', () => {
       const company = makeCompany();
-      const code = companyService.getEmbedCode(company, 'https://api.example.com');
+      const code = companyService.getEmbedCode(company);
       expect(code).toContain('wid_abc123');
       expect(code).toContain('widget.js');
     });
 
     it('sets data-theme=dark when darkMode is enabled', () => {
       const company = makeCompany({ theme: { darkMode: true } });
-      const code = companyService.getEmbedCode(company, 'https://api.example.com');
+      const code = companyService.getEmbedCode(company);
       expect(code).toContain('data-theme="dark"');
+    });
+  });
+
+  // ── buildWidgetConfig ────────────────────────────────────────
+  describe('buildWidgetConfig', () => {
+    it('flattens theme + widgetSettings into the public branding payload', () => {
+      const company = makeCompany({
+        theme: {
+          primaryColor: '#123456',
+          secondaryColor: '#654321',
+          darkMode: false,
+        },
+        widgetSettings: {
+          botName: 'Ada',
+          greeting: 'Hi there',
+          placeholder: 'Ask away',
+          suggestedQuestions: ['What is this?'],
+          showSources: true,
+          allowFeedback: true,
+          allowEmailTranscript: false,
+          position: 'bottom-left',
+          zIndex: 5000,
+          avatarUrl: 'https://cdn.example.com/avatar.png',
+        },
+      });
+
+      const config = companyService.buildWidgetConfig(company);
+
+      expect(config).toMatchObject({
+        companyName: 'Acme Corp',
+        botName: 'Ada',
+        welcomeMessage: 'Hi there',
+        placeholder: 'Ask away',
+        primaryColor: '#123456',
+        secondaryColor: '#654321',
+        avatar: 'https://cdn.example.com/avatar.png',
+        position: 'bottom-left',
+        zIndex: 5000,
+        theme: 'light',
+        suggestedQuestions: ['What is this?'],
+        allowEmailTranscript: false,
+      });
+    });
+
+    it('derives theme="dark" when darkMode is enabled', () => {
+      const company = makeCompany({ theme: { darkMode: true } });
+      const config = companyService.buildWidgetConfig(company);
+      expect(config.theme).toBe('dark');
+    });
+
+    it('falls back to the company logo when theme.logoUrl is unset', () => {
+      const company = makeCompany({ logo: '/uploads/images/co.png', theme: { logoUrl: null } });
+      const config = companyService.buildWidgetConfig(company);
+      expect(config.logo).toBe('/uploads/images/co.png');
     });
   });
 });

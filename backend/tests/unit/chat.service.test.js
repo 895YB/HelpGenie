@@ -56,6 +56,7 @@ jest.unstable_mockModule('../../src/models/index.js', () => ({
   Feedback:  {
     findOne: jest.fn(),
     create:  jest.fn(),
+    find:    jest.fn(),
   },
 }));
 
@@ -398,5 +399,41 @@ describe('chatService.getConversation', () => {
     await expect(
       chatService.getConversation(COMPANY_ID, new mongoose.Types.ObjectId().toString())
     ).rejects.toMatchObject({ statusCode: 404 });
+  });
+});
+
+// ── getSessionHistory (widget session restore) ────────────────
+
+describe('chatService.getSessionHistory', () => {
+  it('returns messages with feedback merged in, for a session belonging to the company', async () => {
+    conversationRepository.findBySession.mockResolvedValue(CONVERSATION);
+    messageRepository.findByConversation.mockResolvedValue([
+      { _id: MSG_ID, role: 'user', content: 'Hi', sources: [], createdAt: new Date() },
+    ]);
+    Feedback.find.mockResolvedValue([{ messageId: MSG_ID, rating: 'thumbs_up' }]);
+
+    const result = await chatService.getSessionHistory(COMPANY_ID, CONVERSATION.sessionId);
+
+    expect(result.conversationId).toBe(CONV_ID);
+    expect(result.messages).toHaveLength(1);
+    expect(result.messages[0].feedback).toBe('thumbs_up');
+  });
+
+  it('returns an empty result when the session does not exist (first-ever visit)', async () => {
+    conversationRepository.findBySession.mockResolvedValue(null);
+
+    const result = await chatService.getSessionHistory(COMPANY_ID, 'sess_unknown');
+
+    expect(result).toEqual({ conversationId: null, messages: [] });
+  });
+
+  it('returns an empty result when the session belongs to a different company (anti-spoofing)', async () => {
+    const foreignConv = { ...CONVERSATION, companyId: new mongoose.Types.ObjectId() };
+    conversationRepository.findBySession.mockResolvedValue(foreignConv);
+
+    const result = await chatService.getSessionHistory(COMPANY_ID, 'sess_hijacked');
+
+    expect(result).toEqual({ conversationId: null, messages: [] });
+    expect(messageRepository.findByConversation).not.toHaveBeenCalled();
   });
 });

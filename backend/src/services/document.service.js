@@ -10,7 +10,6 @@
  * job queue (Bull/BullMQ), which is a straightforward drop-in swap.
  */
 
-import path from 'path';
 import { documentRepository } from '../repositories/document.repository.js';
 import { chunkRepository } from '../repositories/chunk.repository.js';
 import { subscriptionRepository } from '../repositories/subscription.repository.js';
@@ -80,7 +79,7 @@ export const documentService = {
    */
   async retryDocument(companyId, documentId) {
     const doc = await documentRepository.findByIdAndCompany(documentId, companyId);
-    if (!doc) throw AppError.notFound('Document not found');
+    if (!doc) {throw AppError.notFound('Document not found');}
     if (doc.status !== DOCUMENT_STATUS.FAILED) {
       throw AppError.badRequest('Only failed documents can be retried');
     }
@@ -105,7 +104,7 @@ export const documentService = {
 
   async getDocument(companyId, documentId) {
     const doc = await documentRepository.findByIdAndCompany(documentId, companyId);
-    if (!doc) throw AppError.notFound('Document not found');
+    if (!doc) {throw AppError.notFound('Document not found');}
     return doc;
   },
 
@@ -115,7 +114,7 @@ export const documentService = {
 
   async getDocumentChunks(companyId, documentId) {
     const doc = await documentRepository.findByIdAndCompany(documentId, companyId);
-    if (!doc) throw AppError.notFound('Document not found');
+    if (!doc) {throw AppError.notFound('Document not found');}
     return chunkRepository.findByDocument(documentId);
   },
 
@@ -123,7 +122,7 @@ export const documentService = {
 
   async deleteDocument(companyId, documentId) {
     const doc = await documentRepository.findByIdAndCompany(documentId, companyId);
-    if (!doc) throw AppError.notFound('Document not found');
+    if (!doc) {throw AppError.notFound('Document not found');}
 
     await documentRepository.softDelete(documentId, companyId);
 
@@ -143,10 +142,10 @@ export const documentService = {
 
 async function _assertDocumentLimit(companyId) {
   const sub = await subscriptionRepository.findByCompany(companyId);
-  if (!sub) return;
+  if (!sub) {return;}
 
   const limit = sub.features.maxDocuments;
-  if (limit === -1) return; // unlimited
+  if (limit === -1) {return;} // unlimited
 
   const count = await documentRepository.countByCompany(companyId);
   if (count >= limit) {

@@ -3,6 +3,7 @@ import {
   sendMessage,
   submitFeedback,
   emailTranscript,
+  getSessionHistory,
   listConversations,
   getConversationDetails,
   closeConversation,
@@ -15,6 +16,7 @@ import {
   validateChatMessage,
   validateFeedback,
   validateTranscript,
+  validateSessionHistory,
   validateListConversations,
 } from '../validators/chat.validator.js';
 
@@ -42,6 +44,14 @@ router.post(
   validateTranscript,
   resolveWidgetTenant,
   emailTranscript
+);
+
+router.get(
+  '/history',
+  chatLimiter,
+  validateSessionHistory,
+  resolveWidgetTenant,
+  getSessionHistory
 );
 
 // ── Dashboard routes (JWT + tenant required) ──────────────────

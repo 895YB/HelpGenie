@@ -17,7 +17,7 @@ export const userRepository = {
 
   async findByCompany(companyId, role = null) {
     const filter = { companyId, isActive: true };
-    if (role) filter.role = role;
+    if (role) {filter.role = role;}
     return User.find(filter).sort({ createdAt: -1 });
   },
 

@@ -76,11 +76,11 @@ export default function errorMiddleware(err, _req, res, _next) {
   let error = err;
 
   // Translate known library errors into AppErrors
-  if (err.name === 'CastError') error = handleCastError(err);
-  else if (err.code === 11000) error = handleDuplicateKey(err);
-  else if (err.name === 'ValidationError') error = handleValidationError(err);
-  else if (err.name === 'JsonWebTokenError') error = handleJWTError();
-  else if (err.name === 'TokenExpiredError') error = handleJWTExpired();
+  if (err.name === 'CastError') {error = handleCastError(err);}
+  else if (err.code === 11000) {error = handleDuplicateKey(err);}
+  else if (err.name === 'ValidationError') {error = handleValidationError(err);}
+  else if (err.name === 'JsonWebTokenError') {error = handleJWTError();}
+  else if (err.name === 'TokenExpiredError') {error = handleJWTExpired();}
 
   // Non-operational errors are bugs — log and hide the detail from the client
   if (!error.isOperational) {
@@ -94,7 +94,7 @@ export default function errorMiddleware(err, _req, res, _next) {
   logger.warn(`[${error.statusCode}] ${error.message}`);
 
   const body = { success: false, message: error.message };
-  if (error.errors) body.errors = error.errors;
+  if (error.errors) {body.errors = error.errors;}
 
   return res.status(error.statusCode).json(body);
 }

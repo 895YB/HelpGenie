@@ -30,7 +30,7 @@ export const conversationRepository = {
 
   async findByCompany(companyId, { status, page = 1, limit = 20 } = {}) {
     const filter = { companyId };
-    if (status) filter.status = status;
+    if (status) {filter.status = status;}
 
     const skip = (page - 1) * limit;
     const [conversations, total] = await Promise.all([

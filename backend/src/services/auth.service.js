@@ -26,16 +26,6 @@ function buildTokenPair(user) {
   return { accessToken, refreshToken };
 }
 
-function cookieOptions(res) {
-  res.cookie('refreshToken', '', {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    path: '/api/auth',
-  });
-}
-
 // ── Service ──────────────────────────────────────────────────
 
 export const authService = {
@@ -168,7 +158,7 @@ export const authService = {
 
   async logout(userId, rawRefreshToken) {
     const user = await userRepository.findByIdWithTokens(userId);
-    if (!user) return;
+    if (!user) {return;}
 
     if (rawRefreshToken) {
       const hash = hashToken(rawRefreshToken);
@@ -185,7 +175,7 @@ export const authService = {
   async forgotPassword(email) {
     const user = await userRepository.findByEmail(email);
     // Always return success to prevent user enumeration
-    if (!user) return;
+    if (!user) {return;}
 
     const rawToken = user.createPasswordResetToken();
     await user.save({ validateBeforeSave: false });
@@ -240,16 +230,16 @@ export const authService = {
 
   async getMe(userId) {
     const user = await userRepository.findById(userId);
-    if (!user) throw AppError.notFound('User not found');
+    if (!user) {throw AppError.notFound('User not found');}
     return user.toSafeObject();
   },
 
   async changePassword(userId, currentPassword, newPassword) {
     const user = await userRepository.findById(userId, '+password +refreshTokens');
-    if (!user) throw AppError.notFound('User not found');
+    if (!user) {throw AppError.notFound('User not found');}
 
     const valid = await user.comparePassword(currentPassword);
-    if (!valid) throw AppError.unauthorized('Current password is incorrect');
+    if (!valid) {throw AppError.unauthorized('Current password is incorrect');}
 
     user.password = newPassword;
     user.refreshTokens = []; // invalidate all existing sessions

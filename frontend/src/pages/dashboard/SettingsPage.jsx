@@ -5,7 +5,6 @@ import {
   useCompany, useUpdateCompany, useUploadLogo,
   useWidgetSettings, useUpdateWidgetSettings,
 } from '@/hooks/useSettings';
-import { useAuth } from '@/hooks/useAuth';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import Alert from '@/components/ui/Alert';

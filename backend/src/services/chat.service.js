@@ -136,13 +136,13 @@ export const chatService = {
 
   async submitFeedback({ sessionId, messageId, rating, comment }) {
     const conversation = await conversationRepository.findBySession(sessionId);
-    if (!conversation) throw AppError.notFound('Conversation not found');
+    if (!conversation) {throw AppError.notFound('Conversation not found');}
 
     const message = await messageRepository.findByIdAndConversation(
       messageId,
       conversation._id
     );
-    if (!message) throw AppError.notFound('Message not found');
+    if (!message) {throw AppError.notFound('Message not found');}
 
     const existing = await Feedback.findOne({ messageId });
     if (existing) {
@@ -165,7 +165,7 @@ export const chatService = {
 
   async emailTranscript({ sessionId, email, company }) {
     const conversation = await conversationRepository.findBySession(sessionId);
-    if (!conversation) throw AppError.notFound('Conversation not found');
+    if (!conversation) {throw AppError.notFound('Conversation not found');}
 
     if (conversation.companyId.toString() !== company._id.toString()) {
       throw AppError.forbidden('Access denied');
@@ -191,10 +191,46 @@ export const chatService = {
       conversationId,
       companyId
     );
-    if (!conversation) throw AppError.notFound('Conversation not found');
+    if (!conversation) {throw AppError.notFound('Conversation not found');}
 
     const messages = await messageRepository.findByConversation(conversationId);
     return { conversation, messages };
+  },
+
+  // ── Widget session restore ──────────────────────────────────
+
+  /**
+   * Public, unauthenticated — lets the widget rehydrate a prior conversation
+   * after a page refresh, given the sessionId it persisted client-side.
+   * Scoped to companyId (same anti-spoofing check as _getOrCreateConversation)
+   * so one company's widgetId can never read another's session.
+   */
+  async getSessionHistory(companyId, sessionId) {
+    const conversation = await conversationRepository.findBySession(sessionId);
+    if (!conversation || conversation.companyId.toString() !== companyId.toString()) {
+      return { conversationId: null, messages: [] };
+    }
+
+    const [messages, feedbackDocs] = await Promise.all([
+      messageRepository.findByConversation(conversation._id),
+      Feedback.find({ conversationId: conversation._id }),
+    ]);
+
+    const feedbackByMessage = new Map(
+      feedbackDocs.map((f) => [f.messageId.toString(), f.rating])
+    );
+
+    return {
+      conversationId: conversation._id,
+      messages: messages.map((m) => ({
+        id: m._id,
+        role: m.role,
+        content: m.content,
+        sources: m.sources,
+        createdAt: m.createdAt,
+        feedback: feedbackByMessage.get(m._id.toString()) || null,
+      })),
+    };
   },
 };
 

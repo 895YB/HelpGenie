@@ -19,7 +19,7 @@ const HTML_ESCAPE_MAP = {
  * Use on any string rendered directly into HTML without a framework.
  */
 export function escapeHtml(str) {
-  if (typeof str !== 'string') return str;
+  if (typeof str !== 'string') {return str;}
   return str.replace(/[&<>"'/]/g, (c) => HTML_ESCAPE_MAP[c]);
 }
 
@@ -28,7 +28,7 @@ export function escapeHtml(str) {
  * Safe baseline for any user-supplied string stored in MongoDB.
  */
 export function sanitizeString(str) {
-  if (typeof str !== 'string') return str;
+  if (typeof str !== 'string') {return str;}
   return str
     .replace(/\0/g, '')          // null bytes
     .replace(/\r\n/g, '\n')      // normalize line endings
@@ -54,7 +54,7 @@ const INJECTION_PATTERNS = [
 ];
 
 export function sanitizeChatMessage(message) {
-  if (typeof message !== 'string') return '';
+  if (typeof message !== 'string') {return '';}
 
   let clean = sanitizeString(message);
 
@@ -76,7 +76,7 @@ export function sanitizeChatMessage(message) {
  * Used as a belt-and-suspenders layer on incoming request bodies.
  */
 export function sanitizeObject(obj, depth = 0) {
-  if (depth > 5 || obj === null || typeof obj !== 'object') return obj;
+  if (depth > 5 || obj === null || typeof obj !== 'object') {return obj;}
   const out = Array.isArray(obj) ? [] : {};
   for (const [key, val] of Object.entries(obj)) {
     if (typeof val === 'string') {

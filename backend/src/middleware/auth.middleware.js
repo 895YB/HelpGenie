@@ -40,7 +40,7 @@ export async function authenticate(req, _res, next) {
 export async function optionalAuthenticate(req, _res, next) {
   try {
     const token = extractBearerToken(req.headers.authorization);
-    if (!token) return next();
+    if (!token) {return next();}
 
     const decoded = verifyAccessToken(token);
     const user = await User.findById(decoded.userId);

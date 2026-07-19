@@ -5,7 +5,6 @@ import { subscriptionRepository } from '../repositories/subscription.repository.
 import { AppError } from '../middleware/error.middleware.js';
 import { deleteUploadedFile } from '../middleware/upload.middleware.js';
 import { sendEmailVerification } from './email.service.js';
-import { PLAN_LIMITS } from '../models/Subscription.model.js';
 import logger from '../utils/logger.js';
 
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
@@ -13,7 +12,7 @@ const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 export const userService = {
   async getProfile(userId) {
     const user = await userRepository.findById(userId);
-    if (!user) throw AppError.notFound('User not found');
+    if (!user) {throw AppError.notFound('User not found');}
     return user.toSafeObject();
   },
 
@@ -25,12 +24,12 @@ export const userService = {
     delete updates.isActive;
 
     const user = await userRepository.updateById(userId, updates);
-    if (!user) throw AppError.notFound('User not found');
+    if (!user) {throw AppError.notFound('User not found');}
     return user.toSafeObject();
   },
 
   async uploadAvatar(userId, file) {
-    if (!file) throw AppError.badRequest('No image file provided');
+    if (!file) {throw AppError.badRequest('No image file provided');}
 
     const existing = await userRepository.findById(userId);
     if (existing?.avatar && existing.avatar.startsWith('/uploads/')) {
@@ -96,7 +95,7 @@ export const userService = {
 
   async updateMember(companyId, targetUserId, updates, requestingUser) {
     const target = await userRepository.findById(targetUserId);
-    if (!target) throw AppError.notFound('User not found');
+    if (!target) {throw AppError.notFound('User not found');}
 
     // Ensure the target belongs to the same company
     if (target.companyId?.toString() !== companyId) {
@@ -121,8 +120,8 @@ export const userService = {
     }
 
     const allowed = {};
-    if (updates.role !== undefined) allowed.role = updates.role;
-    if (updates.isActive !== undefined) allowed.isActive = updates.isActive;
+    if (updates.role !== undefined) {allowed.role = updates.role;}
+    if (updates.isActive !== undefined) {allowed.isActive = updates.isActive;}
 
     const updated = await userRepository.updateById(targetUserId, allowed);
     return updated.toSafeObject();
@@ -134,7 +133,7 @@ export const userService = {
     }
 
     const target = await userRepository.findById(targetUserId);
-    if (!target) throw AppError.notFound('User not found');
+    if (!target) {throw AppError.notFound('User not found');}
 
     if (target.companyId?.toString() !== companyId) {
       throw AppError.forbidden('Cannot remove a user from a different company');

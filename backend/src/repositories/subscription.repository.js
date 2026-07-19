@@ -44,7 +44,7 @@ export const subscriptionRepository = {
 
   async isWithinChatLimit(companyId) {
     const sub = await this.findByCompany(companyId);
-    if (!sub) return false;
+    if (!sub) {return false;}
     return sub.isWithinChatLimit();
   },
 };

@@ -116,7 +116,7 @@ documentSchema.index({ companyId: 1, fileType: 1 });
 
 // ── Virtuals ────────────────────────────────────────────────
 documentSchema.virtual('fileSizeMB').get(function () {
-  if (!this.fileSize) return null;
+  if (!this.fileSize) {return null;}
   return (this.fileSize / (1024 * 1024)).toFixed(2);
 });
 

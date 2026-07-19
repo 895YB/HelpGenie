@@ -19,6 +19,7 @@ const widgetSettingsSchema = new mongoose.Schema(
     greeting: { type: String, default: 'Hi! How can I help you today?' },
     placeholder: { type: String, default: 'Ask me anything...' },
     botName: { type: String, default: 'Support Assistant' },
+    avatarUrl: { type: String, default: null },
     suggestedQuestions: { type: [String], default: [] },
     showSources: { type: Boolean, default: true },
     allowFeedback: { type: Boolean, default: true },
@@ -141,10 +142,7 @@ companySchema.statics.findByWidgetId = function (widgetId) {
 };
 
 companySchema.statics.findByApiKey = function (apiKey) {
-  return this.findOne({ isActive: true }).select('+apiKey').then((doc) => {
-    // Re-query including apiKey field
-    return this.findOne({ apiKey, isActive: true }).select('+apiKey');
-  });
+  return this.findOne({ apiKey, isActive: true }).select('+apiKey');
 };
 
 const Company = mongoose.model('Company', companySchema);

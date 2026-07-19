@@ -151,7 +151,7 @@ subscriptionSchema.methods.upgradePlan = function (newPlan) {
 
 subscriptionSchema.methods.isWithinChatLimit = function () {
   const limit = this.features.maxChatsPerMonth;
-  if (limit === -1) return true; // unlimited
+  if (limit === -1) {return true;} // unlimited
   return this.usage.chatsThisMonth < limit;
 };
 

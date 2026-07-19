@@ -39,8 +39,7 @@ export async function regenerateApiKey(req, res, next) {
 export async function getEmbedCode(req, res, next) {
   try {
     const company = await companyService.getCompany(req.companyId);
-    const apiBaseUrl = `${req.protocol}://${req.get('host')}`;
-    const embedCode = companyService.getEmbedCode(company, apiBaseUrl);
+    const embedCode = companyService.getEmbedCode(company);
     return ApiResponse.success(res, { embedCode, widgetId: company.widgetId });
   } catch (err) { next(err); }
 }
@@ -49,5 +48,17 @@ export async function getSubscription(req, res, next) {
   try {
     const subscription = await companyService.getSubscription(req.companyId);
     return ApiResponse.success(res, { subscription });
+  } catch (err) { next(err); }
+}
+
+/**
+ * GET /api/company/widget-config
+ * Public, unauthenticated — req.company is injected by resolveWidgetTenant
+ * from the ?widgetId=... query param.
+ */
+export async function getWidgetConfig(req, res, next) {
+  try {
+    const config = companyService.buildWidgetConfig(req.company);
+    return ApiResponse.success(res, config);
   } catch (err) { next(err); }
 }

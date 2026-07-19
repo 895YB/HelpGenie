@@ -5,7 +5,6 @@ import {
 } from 'lucide-react';
 import { useConversations } from '@/hooks/useConversations';
 import ConversationDetail from '@/components/conversations/ConversationDetail';
-import Button from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
 
 const STATUS_FILTERS = [

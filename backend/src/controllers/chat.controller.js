@@ -49,6 +49,22 @@ export async function submitFeedback(req, res, next) {
 }
 
 /**
+ * GET /api/chat/history
+ * Public REST endpoint — restores a widget's prior conversation turns
+ * after a page refresh, given the sessionId persisted client-side.
+ * req.company is injected by resolveWidgetTenant middleware.
+ */
+export async function getSessionHistory(req, res, next) {
+  try {
+    const { sessionId } = req.query;
+    const history = await chatService.getSessionHistory(req.company._id, sessionId);
+    return ApiResponse.success(res, history);
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
  * POST /api/chat/transcript
  * Emails a full conversation transcript to the customer.
  * req.company injected by resolveWidgetTenant.
@@ -125,7 +141,7 @@ export async function closeConversation(req, res, next) {
 
     const { conversationRepository } = await import('../repositories/conversation.repository.js');
     const conversation = await conversationRepository.findByIdAndCompany(id, req.companyId);
-    if (!conversation) throw AppError.notFound('Conversation not found');
+    if (!conversation) {throw AppError.notFound('Conversation not found');}
 
     await conversationRepository.close(id);
     return ApiResponse.noContent(res);

@@ -9,7 +9,7 @@ import { env } from '../config/env.js';
 const UPLOAD_ROOT = path.resolve(env.uploadDir);
 const IMAGE_DIR = path.join(UPLOAD_ROOT, 'images');
 [UPLOAD_ROOT, IMAGE_DIR].forEach((dir) => {
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  if (!fs.existsSync(dir)) {fs.mkdirSync(dir, { recursive: true });}
 });
 
 // ── Allowed types ────────────────────────────────────────────
@@ -47,12 +47,12 @@ const imageStorage = multer.diskStorage({
 // ── File filters ─────────────────────────────────────────────
 
 const documentFilter = (_req, file, cb) => {
-  if (DOCUMENT_TYPES.has(file.mimetype)) return cb(null, true);
+  if (DOCUMENT_TYPES.has(file.mimetype)) {return cb(null, true);}
   cb(AppError.badRequest('Only PDF, DOCX, and TXT files are allowed'), false);
 };
 
 const imageFilter = (_req, file, cb) => {
-  if (IMAGE_TYPES.has(file.mimetype)) return cb(null, true);
+  if (IMAGE_TYPES.has(file.mimetype)) {return cb(null, true);}
   cb(AppError.badRequest('Only JPEG, PNG, and WebP images are allowed'), false);
 };
 
@@ -75,7 +75,7 @@ const imageUploader = multer({
 function wrap(uploader) {
   return (req, res, next) => {
     uploader(req, res, (err) => {
-      if (!err) return next();
+      if (!err) {return next();}
       if (err instanceof multer.MulterError) {
         if (err.code === 'LIMIT_FILE_SIZE') {
           return next(
@@ -96,7 +96,7 @@ export const uploadImage = wrap(imageUploader);
 
 /** Deletes a file from disk; logs but does not throw on failure. */
 export function deleteUploadedFile(filePath) {
-  if (!filePath) return;
+  if (!filePath) {return;}
   fs.unlink(filePath, (err) => {
     if (err && err.code !== 'ENOENT') {
       // Only log — a missing file is not a hard error

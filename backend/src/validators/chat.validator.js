@@ -70,6 +70,20 @@ export const validateTranscript = [
   handleValidationErrors,
 ];
 
+export const validateSessionHistory = [
+  query('widgetId')
+    .trim()
+    .notEmpty()
+    .withMessage('widgetId is required'),
+
+  query('sessionId')
+    .trim()
+    .notEmpty()
+    .withMessage('sessionId is required'),
+
+  handleValidationErrors,
+];
+
 export const validateListConversations = [
   query('page')
     .optional()

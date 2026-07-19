@@ -36,7 +36,7 @@ function splitSentences(text) {
   // Anything left after the last terminal punctuation mark
   const matched = sentences.join('');
   const remainder = text.slice(matched.length).trim();
-  if (remainder) sentences.push(remainder);
+  if (remainder) {sentences.push(remainder);}
   return sentences.filter((s) => s.trim().length > 0);
 }
 
@@ -49,7 +49,7 @@ function splitAtWordBoundary(text, maxLen) {
     let end = start + maxLen;
     if (end < text.length) {
       const spaceIdx = text.lastIndexOf(' ', end);
-      if (spaceIdx > start) end = spaceIdx;
+      if (spaceIdx > start) {end = spaceIdx;}
     }
     parts.push(text.slice(start, end).trim());
     start = end;
@@ -84,7 +84,7 @@ export function chunkText(text, options = {}) {
   const overlap   = options.overlap   ?? DEFAULT_OVERLAP;
 
   const cleaned = cleanText(text);
-  if (!cleaned) return [];
+  if (!cleaned) {return [];}
 
   // Short document: single chunk, no splitting needed
   if (cleaned.length <= chunkSize) {
@@ -143,13 +143,13 @@ export function chunkText(text, options = {}) {
         }
       }
 
-      if (sentBuf.trim()) buffer = sentBuf.trim();
+      if (sentBuf.trim()) {buffer = sentBuf.trim();}
     } else {
       buffer = para;
     }
   }
 
-  if (buffer.trim()) rawChunks.push(buffer.trim());
+  if (buffer.trim()) {rawChunks.push(buffer.trim());}
 
   // ── Step 3: inject overlap ───────────────────────────────
   if (overlap <= 0 || rawChunks.length <= 1) {
@@ -157,7 +157,7 @@ export function chunkText(text, options = {}) {
   }
 
   return rawChunks.map((content, i) => {
-    if (i === 0) return makeChunk(content, i);
+    if (i === 0) {return makeChunk(content, i);}
 
     const prev = rawChunks[i - 1];
     const tail = prev.slice(-overlap);

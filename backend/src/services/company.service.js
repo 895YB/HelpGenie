@@ -3,12 +3,13 @@ import { companyRepository } from '../repositories/company.repository.js';
 import { subscriptionRepository } from '../repositories/subscription.repository.js';
 import { AppError } from '../middleware/error.middleware.js';
 import { deleteUploadedFile } from '../middleware/upload.middleware.js';
+import { env } from '../config/env.js';
 import logger from '../utils/logger.js';
 
 export const companyService = {
   async getCompany(companyId) {
     const company = await companyRepository.findById(companyId);
-    if (!company) throw AppError.notFound('Company not found');
+    if (!company) {throw AppError.notFound('Company not found');}
     return company;
   },
 
@@ -21,12 +22,12 @@ export const companyService = {
     delete updates.subscription;
 
     const company = await companyRepository.updateById(companyId, updates);
-    if (!company) throw AppError.notFound('Company not found');
+    if (!company) {throw AppError.notFound('Company not found');}
     return company;
   },
 
   async uploadLogo(companyId, file) {
-    if (!file) throw AppError.badRequest('No image file provided');
+    if (!file) {throw AppError.badRequest('No image file provided');}
 
     // Delete the old logo from disk if it was a local file
     const existing = await companyRepository.findById(companyId);
@@ -43,13 +44,13 @@ export const companyService = {
 
   async getApiKey(companyId) {
     const company = await companyRepository.findByIdWithApiKey(companyId);
-    if (!company) throw AppError.notFound('Company not found');
+    if (!company) {throw AppError.notFound('Company not found');}
     return { apiKey: company.apiKey, widgetId: company.widgetId };
   },
 
   async regenerateApiKey(companyId) {
     const company = await companyRepository.findByIdWithApiKey(companyId);
-    if (!company) throw AppError.notFound('Company not found');
+    if (!company) {throw AppError.notFound('Company not found');}
 
     const newKey = company.regenerateApiKey();
     await company.save();
@@ -60,14 +61,14 @@ export const companyService = {
 
   async getTheme(companyId) {
     const company = await companyRepository.findById(companyId);
-    if (!company) throw AppError.notFound('Company not found');
+    if (!company) {throw AppError.notFound('Company not found');}
     return company.theme;
   },
 
   async updateTheme(companyId, themeUpdates) {
     // Merge updates with existing theme rather than replace entirely
     const company = await companyRepository.findById(companyId);
-    if (!company) throw AppError.notFound('Company not found');
+    if (!company) {throw AppError.notFound('Company not found');}
 
     const merged = { ...company.theme.toObject(), ...themeUpdates };
     const updated = await companyRepository.updateTheme(companyId, merged);
@@ -76,13 +77,13 @@ export const companyService = {
 
   async getWidgetSettings(companyId) {
     const company = await companyRepository.findById(companyId);
-    if (!company) throw AppError.notFound('Company not found');
+    if (!company) {throw AppError.notFound('Company not found');}
     return company.widgetSettings;
   },
 
   async updateWidgetSettings(companyId, settingsUpdates) {
     const company = await companyRepository.findById(companyId);
-    if (!company) throw AppError.notFound('Company not found');
+    if (!company) {throw AppError.notFound('Company not found');}
 
     const merged = { ...company.widgetSettings.toObject(), ...settingsUpdates };
     const updated = await companyRepository.updateWidgetSettings(companyId, merged);
@@ -95,7 +96,7 @@ export const companyService = {
       subscriptionRepository.findByCompany(companyId),
     ]);
 
-    if (!company) throw AppError.notFound('Company not found');
+    if (!company) {throw AppError.notFound('Company not found');}
 
     return {
       company: {
@@ -130,17 +131,45 @@ export const companyService = {
 
   async getSubscription(companyId) {
     const sub = await subscriptionRepository.findByCompany(companyId);
-    if (!sub) throw AppError.notFound('Subscription not found');
+    if (!sub) {throw AppError.notFound('Subscription not found');}
     return sub;
   },
 
   /**
-   * Generates the HTML embed snippet for the customer-facing widget.
+   * Public, unauthenticated branding/config payload for the embeddable widget.
+   * `company` is already resolved by the resolveWidgetTenant middleware.
    */
-  getEmbedCode(company, apiBaseUrl) {
+  buildWidgetConfig(company) {
+    const { theme, widgetSettings } = company;
+    return {
+      companyName: company.name,
+      botName: widgetSettings.botName,
+      welcomeMessage: widgetSettings.greeting,
+      placeholder: widgetSettings.placeholder,
+      primaryColor: theme.primaryColor,
+      secondaryColor: theme.secondaryColor,
+      accentColor: theme.accentColor,
+      logo: theme.logoUrl || company.logo,
+      avatar: widgetSettings.avatarUrl,
+      position: widgetSettings.position,
+      zIndex: widgetSettings.zIndex,
+      theme: theme.darkMode ? 'dark' : 'light',
+      suggestedQuestions: widgetSettings.suggestedQuestions,
+      showSources: widgetSettings.showSources,
+      allowFeedback: widgetSettings.allowFeedback,
+      allowEmailTranscript: widgetSettings.allowEmailTranscript,
+    };
+  },
+
+  /**
+   * Generates the HTML embed snippet for the customer-facing widget.
+   * widget.js is built by the widget/ workspace into frontend/public and
+   * served by the frontend origin, not the backend — see widget/vite.config.js.
+   */
+  getEmbedCode(company) {
     return `<!-- AI Widget — paste before </body> -->
 <script
-  src="${apiBaseUrl}/widget.js"
+  src="${env.clientUrl}/widget.js"
   data-widget-id="${company.widgetId}"
   data-theme="${company.theme?.darkMode ? 'dark' : 'light'}"
   async
