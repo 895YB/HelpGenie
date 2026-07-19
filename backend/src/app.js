@@ -27,8 +27,9 @@ import companyRoutes  from './routes/company.routes.js';
 import settingsRoutes from './routes/settings.routes.js';
 import userRoutes     from './routes/user.routes.js';
 import documentRoutes from './routes/document.routes.js';
-import chatRoutes     from './routes/chat.routes.js';
-import { initSocket } from './config/socket.js';
+import chatRoutes      from './routes/chat.routes.js';
+import analyticsRoutes from './routes/analytics.routes.js';
+import { initSocket }  from './config/socket.js';
 
 const app = express();
 
@@ -103,6 +104,7 @@ app.use('/api/settings',  settingsRoutes);
 app.use('/api/team',      userRoutes);
 app.use('/api/documents', documentRoutes);
 app.use('/api/chat',      chatRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 // ── 404 handler ───────────────────────────────────────────────
 app.use((_req, res) => {
