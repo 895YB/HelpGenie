@@ -12,6 +12,8 @@ import OverviewPage       from '@/pages/dashboard/OverviewPage';
 import DocumentsPage      from '@/pages/dashboard/DocumentsPage';
 import AnalyticsPage      from '@/pages/dashboard/AnalyticsPage';
 import ConversationsPage  from '@/pages/dashboard/ConversationsPage';
+import SettingsPage       from '@/pages/dashboard/SettingsPage';
+import TeamPage           from '@/pages/dashboard/TeamPage';
 
 // Placeholder for pages added in upcoming modules
 const ComingSoon = ({ name }) => (
@@ -40,8 +42,8 @@ export default function App() {
             <Route path="/dashboard/documents"     element={<DocumentsPage />} />
             <Route path="/dashboard/analytics"     element={<AnalyticsPage />} />
             <Route path="/dashboard/conversations" element={<ConversationsPage />} />
-            <Route path="/dashboard/team"          element={<ComingSoon name="Team" />} />
-            <Route path="/dashboard/settings"      element={<ComingSoon name="Settings" />} />
+            <Route path="/dashboard/team"          element={<TeamPage />} />
+            <Route path="/dashboard/settings"      element={<SettingsPage />} />
             <Route path="/dashboard/subscription"  element={<ComingSoon name="Subscription" />} />
           </Route>
         </Route>
