@@ -11,6 +11,7 @@ import VerifyEmailPage    from '@/pages/auth/VerifyEmailPage';
 import OverviewPage       from '@/pages/dashboard/OverviewPage';
 import DocumentsPage      from '@/pages/dashboard/DocumentsPage';
 import AnalyticsPage      from '@/pages/dashboard/AnalyticsPage';
+import ConversationsPage  from '@/pages/dashboard/ConversationsPage';
 
 // Placeholder for pages added in upcoming modules
 const ComingSoon = ({ name }) => (
@@ -38,7 +39,7 @@ export default function App() {
             <Route path="/dashboard"               element={<OverviewPage />} />
             <Route path="/dashboard/documents"     element={<DocumentsPage />} />
             <Route path="/dashboard/analytics"     element={<AnalyticsPage />} />
-            <Route path="/dashboard/conversations" element={<ComingSoon name="Conversations" />} />
+            <Route path="/dashboard/conversations" element={<ConversationsPage />} />
             <Route path="/dashboard/team"          element={<ComingSoon name="Team" />} />
             <Route path="/dashboard/settings"      element={<ComingSoon name="Settings" />} />
             <Route path="/dashboard/subscription"  element={<ComingSoon name="Subscription" />} />
