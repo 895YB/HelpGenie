@@ -9,6 +9,7 @@ import ForgotPasswordPage from '@/pages/auth/ForgotPasswordPage';
 import ResetPasswordPage  from '@/pages/auth/ResetPasswordPage';
 import VerifyEmailPage    from '@/pages/auth/VerifyEmailPage';
 import OverviewPage       from '@/pages/dashboard/OverviewPage';
+import DocumentsPage      from '@/pages/dashboard/DocumentsPage';
 
 // Placeholder for pages added in upcoming modules
 const ComingSoon = ({ name }) => (
@@ -34,7 +35,7 @@ export default function App() {
         <Route element={<ProtectedRoute />}>
           <Route element={<DashboardLayout />}>
             <Route path="/dashboard"               element={<OverviewPage />} />
-            <Route path="/dashboard/documents"     element={<ComingSoon name="Documents" />} />
+            <Route path="/dashboard/documents"     element={<DocumentsPage />} />
             <Route path="/dashboard/analytics"     element={<ComingSoon name="Analytics" />} />
             <Route path="/dashboard/conversations" element={<ComingSoon name="Conversations" />} />
             <Route path="/dashboard/team"          element={<ComingSoon name="Team" />} />
