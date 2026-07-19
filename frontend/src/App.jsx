@@ -1,16 +1,19 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import AuthLayout from '@/layouts/AuthLayout';
-import LoginPage from '@/pages/auth/LoginPage';
-import RegisterPage from '@/pages/auth/RegisterPage';
-import ForgotPasswordPage from '@/pages/auth/ForgotPasswordPage';
-import ResetPasswordPage from '@/pages/auth/ResetPasswordPage';
-import VerifyEmailPage from '@/pages/auth/VerifyEmailPage';
+import DashboardLayout from '@/layouts/DashboardLayout';
 
-// Dashboard pages added in Module 10+
-const DashboardPlaceholder = () => (
-  <div className="flex h-screen items-center justify-center text-gray-500">
-    Dashboard — coming soon
+import LoginPage          from '@/pages/auth/LoginPage';
+import RegisterPage       from '@/pages/auth/RegisterPage';
+import ForgotPasswordPage from '@/pages/auth/ForgotPasswordPage';
+import ResetPasswordPage  from '@/pages/auth/ResetPasswordPage';
+import VerifyEmailPage    from '@/pages/auth/VerifyEmailPage';
+import OverviewPage       from '@/pages/dashboard/OverviewPage';
+
+// Placeholder for pages added in upcoming modules
+const ComingSoon = ({ name }) => (
+  <div className="flex h-64 items-center justify-center rounded-xl border-2 border-dashed border-gray-200">
+    <p className="text-sm text-gray-400">{name} — coming soon</p>
   </div>
 );
 
@@ -18,23 +21,31 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* ── Public auth routes ─────────────────────────────── */}
+        {/* ── Auth routes (public, redirect to /dashboard if logged in) ── */}
         <Route element={<AuthLayout />}>
-          <Route path="/login"          element={<LoginPage />} />
-          <Route path="/register"       element={<RegisterPage />} />
+          <Route path="/login"           element={<LoginPage />} />
+          <Route path="/register"        element={<RegisterPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-          <Route path="/reset-password" element={<ResetPasswordPage />} />
-          <Route path="/verify-email"   element={<VerifyEmailPage />} />
+          <Route path="/reset-password"  element={<ResetPasswordPage />} />
+          <Route path="/verify-email"    element={<VerifyEmailPage />} />
         </Route>
 
-        {/* ── Protected dashboard routes ─────────────────────── */}
+        {/* ── Protected dashboard routes ───────────────────────────────── */}
         <Route element={<ProtectedRoute />}>
-          <Route path="/dashboard/*" element={<DashboardPlaceholder />} />
+          <Route element={<DashboardLayout />}>
+            <Route path="/dashboard"               element={<OverviewPage />} />
+            <Route path="/dashboard/documents"     element={<ComingSoon name="Documents" />} />
+            <Route path="/dashboard/analytics"     element={<ComingSoon name="Analytics" />} />
+            <Route path="/dashboard/conversations" element={<ComingSoon name="Conversations" />} />
+            <Route path="/dashboard/team"          element={<ComingSoon name="Team" />} />
+            <Route path="/dashboard/settings"      element={<ComingSoon name="Settings" />} />
+            <Route path="/dashboard/subscription"  element={<ComingSoon name="Subscription" />} />
+          </Route>
         </Route>
 
-        {/* ── Default redirect ───────────────────────────────── */}
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        {/* ── Fallback ─────────────────────────────────────────────────── */}
+        <Route path="/"  element={<Navigate to="/dashboard" replace />} />
+        <Route path="*"  element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </BrowserRouter>
   );
